@@ -1,48 +1,38 @@
 body {
     font-family: sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
     margin: 0;
     background-color: #f0f0f0;
+    color: #333;
 }
 
-.container {
-    text-align: center;
-    background-color: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.game-info {
+#welcome-container, #game-container {
     display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-}
-
-#problem {
-    font-size: 2em;
-    margin-bottom: 20px;
-}
-
-input {
-    padding: 10px;
-    font-size: 1em;
-    width: 150px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
     text-align: center;
 }
-
-button {
-    padding: 10px 20px;
-    font-size: 1em;
-    cursor: pointer;
-}
-
 
 #welcome-container {
-    display: block;
+    background-color: #3498db;
+    color: white;
+}
+
+#game-container {
+    background-color: #2ecc71;
+    color: white;
+}
+
+h1 {
+    font-size: 3em;
+    margin-bottom: 30px;
+}
+
+h2 {
+    font-size: 1.5em;
+    margin-bottom: 15px;
 }
 
 #auth-forms {
@@ -53,16 +43,50 @@ button {
 }
 
 #signup-form, #login-form {
-    border: 1px solid #ccc;
-    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 30px;
     border-radius: 8px;
 }
 
-#logout-button {
-    margin-left: 20px;
-    background-color: #ff4d4d;
-    color: white;
+.game-info {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 80%;
+    max-width: 600px;
+    margin-bottom: 40px;
+    font-size: 1.2em;
+}
+
+#problem {
+    font-size: 4em;
+    font-weight: bold;
+    margin-bottom: 30px;
+}
+
+input {
+    padding: 15px;
+    font-size: 1.2em;
+    width: 200px;
+    text-align: center;
     border: none;
+    border-radius: 5px;
+}
+
+button {
+    padding: 15px 30px;
+    font-size: 1.2em;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #f1c40f;
+    color: #333;
+    margin-left: 10px;
+}
+
+#logout-button {
+    background-color: #e74c3c;
+    color: white;
 }
 
 .hidden {
@@ -70,10 +94,24 @@ button {
 }
 
 @media (max-width: 600px) {
-    .container {
-        width: 90%;
+    h1 {
+        font-size: 2em;
     }
     #auth-forms {
         flex-direction: column;
+        gap: 20px;
+    }
+    .game-info {
+        flex-direction: column;
+        gap: 10px;
+        font-size: 1em;
+    }
+    #problem {
+        font-size: 3em;
+    }
+    input, button {
+        font-size: 1em;
+        width: 80%;
+        margin-top: 10px;
     }
 }
