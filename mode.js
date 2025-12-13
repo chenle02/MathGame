@@ -1,8 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
-    try {
-        const modeButtons = document.querySelectorAll('.mode-btn');
+    const modeButtons = document.querySelectorAll('.mode-btn');
+    const errorMessageElement = document.getElementById('error-message');
 
-        // First, check if a user is even logged in. If not, back to index.
+    function displayError(message) {
+        errorMessageElement.textContent = message;
+    }
+
+    try {
         if (!localStorage.getItem('math_game_currentUser')) {
             window.location.href = 'index.html?t=' + new Date().getTime();
             return;
@@ -15,13 +19,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     localStorage.setItem('math_game_currentMode', selectedMode);
                     window.location.href = 'game.html?t=' + new Date().getTime();
                 } catch (e) {
-                    alert('Error saving selection: ' + e.message);
+                    displayError('Could not save your selection. Storage may be disabled.');
                     console.error('Failed to save mode:', e);
                 }
             });
         });
     } catch (e) {
-        alert('Error on mode page: ' + e.message);
+        displayError('Error on mode page: ' + e.message);
         console.error('Mode page loading failed:', e);
     }
 });
