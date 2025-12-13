@@ -37,15 +37,20 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error('Mode page loading failed:', e);
     }
 
-    logoutButton.addEventListener('click', () => {
+    function handleLogout() {
         try {
-            storedData.currentUser = null;
-            localStorage.setItem('math_game_data', JSON.stringify(storedData));
+            const sessionData = JSON.parse(localStorage.getItem('math_game_data')) || { users: {}, archivedUsers: {}, currentUser: null };
+            sessionData.currentUser = null;
+            localStorage.setItem('math_game_data', JSON.stringify(sessionData));
             localStorage.removeItem('math_game_currentMode');
             window.location.href = 'index.html?t=' + new Date().getTime();
         } catch (err) {
             displayError('Unable to log out. Please refresh and try again.');
             console.error('Mode logout failed:', err);
         }
-    });
+    }
+
+    if (logoutButton) {
+        logoutButton.addEventListener('click', handleLogout);
+    }
 });
