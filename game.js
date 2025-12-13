@@ -20,12 +20,10 @@ let currentAnswer;
 let currentProblemType;
 let timerInterval;
 let currentUser = null;
+let currentMode = null;
 
 // --- HELPER FUNCTIONS ---
-function gcd(a, b) {
-    return b === 0 ? a : gcd(b, a % b);
-}
-
+function gcd(a, b) { return b === 0 ? a : gcd(b, a % b); }
 function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -37,10 +35,11 @@ function shuffle(array) {
 // --- INITIALIZATION ---
 function initialize() {
     currentUser = localStorage.getItem('math_game_currentUser');
-    if (!currentUser) {
-        window.location.href = 'index.html';
-        return;
-    }
+    currentMode = localStorage.getItem('math_game_currentMode');
+
+    if (!currentUser) { window.location.href = 'index.html'; return; }
+    if (!currentMode) { window.location.href = 'mode.html'; return; }
+    
     playerNameElement.textContent = currentUser;
     resetGame();
     generateProblem();
@@ -48,9 +47,7 @@ function initialize() {
 }
 
 function resetGame() {
-    score = 0;
-    level = 1;
-    timeLeft = 60;
+    score = 0; level = 1; timeLeft = 60;
     updateScore();
     levelElement.textContent = `Level: ${level}`;
     timerElement.textContent = `Time: ${timeLeft}`;
@@ -59,10 +56,122 @@ function resetGame() {
 
 logoutButton.addEventListener('click', () => {
     localStorage.removeItem('math_game_currentUser');
+    localStorage.removeItem('math_game_currentMode');
     window.location.href = 'index.html?t=' + new Date().getTime();
 });
 
 // --- UI AND DRAWING ---
+function displayChoices(choices) {
+    answerChoicesElement.innerHTML = '';
+    choices.forEach(choice => {
+        const button = document.createElement('button');
+        button.textContent = choice.text;
+        button.className = 'choice-btn';
+        button.onclick = () => checkAnswer(choice.value);
+        answerChoicesElement.appendChild(button);
+    });
+}
+function drawAngle(angleType) { /* ... (drawing logic as before) ... */ }
+
+// --- PROBLEM GENERATION ---
+function generateProblem() {
+    let problemTypes = [];
+    if (currentMode === 'mix') {
+        problemTypes = ['number', 'fraction', 'decimal', 'angle'];
+    } else if (currentMode.startsWith('number_')) {
+        problemTypes = [currentMode]; // e.g., 'number_+'
+    } else {
+        problemTypes = [currentMode]; // e.g., 'fraction'
+    }
+
+    const problemType = problemTypes[Math.floor(Math.random() * problemTypes.length)];
+    currentProblemType = problemType;
+
+    problemTextElement.style.display = 'block';
+    canvasContainer.style.display = 'none';
+
+    let choices = [];
+    let problemText = '';
+
+    // Determine the specific operation for number types
+    let op = '';
+    if (problemType.startsWith('number_')) {
+        op = problemType.split('_')[1];
+    } else if (problemType === 'number') {
+        const ops = ['+', '-', '*', '/'];
+        op = ops[Math.floor(Math.random() * ops.length)];
+    }
+
+    if (op) { // Handle all number-based operations
+        let num1, num2;
+        if (op === '+') { num1 = Math.floor(Math.random()*10*level); num2 = Math.floor(Math.random()*10*level); currentAnswer = num1 + num2; }
+        if (op === '-') { num1 = Math.floor(Math.random()*10*level); num2 = Math.floor(Math.random()*num1); currentAnswer = num1 - num2; }
+        if (op === '*') { num1 = Math.floor(Math.random()*10); num2 = Math.floor(Math.random()*10); currentAnswer = num1 * num2; }
+        if (op === '/') { num2 = Math.floor(Math.random()*9)+1; num1 = num2*(Math.floor(Math.random()*10)); currentAnswer = num1 / num2; }
+        problemText = `${num1} ${op.replace('*','×').replace('/','÷')} ${num2}`;
+        choices = [
+            { text: currentAnswer, value: currentAnswer },
+            { text: currentAnswer + (Math.floor(Math.random()*3)+1), value: currentAnswer + (Math.floor(Math.random()*3)+1) },
+            { text: Math.max(0, currentAnswer - (Math.floor(Math.random()*3)+1)), value: Math.max(0, currentAnswer - (Math.floor(Math.random()*3)+1)) }
+        ];
+    } else if (problemType === 'decimal') {
+        let num1 = parseFloat((Math.random() * 10).toFixed(1));
+        let num2 = parseFloat((Math.random() * 10).toFixed(1));
+        currentAnswer = parseFloat((num1 + num2).toFixed(1));
+        problemText = `${num1} + ${num2}`;
+        choices = [
+            { text: currentAnswer, value: currentAnswer },
+            { text: parseFloat((currentAnswer + 1).toFixed(1)), value: parseFloat((currentAnswer + 1).toFixed(1)) },
+            { text: parseFloat(Math.max(0, currentAnswer - 1).toFixed(1)), value: parseFloat(Math.max(0, currentAnswer - 1).toFixed(1)) }
+        ];
+    } else if (problemType === 'fraction') {
+        const den1=Math.floor(Math.random()*5)+2, den2=Math.floor(Math.random()*5)+2;
+        const num_1=Math.floor(Math.random()*den1)+1, num_2=Math.floor(Math.random()*den2)+1;
+        problemText = `${num_1}/${den1} + ${num_2}/${den2}`;
+        let ansNum=num_1*den2+num_2*den1, ansDen=den1*den2, common=gcd(ansNum,ansDen);
+        currentAnswer = `${ansNum/common}/${ansDen/common}`;
+        choices = [
+            { text: currentAnswer, value: currentAnswer },
+            { text: `${ansNum/common+1}/${ansDen/common}`, value: `${ansNum/common+1}/${ansDen/common}` },
+            { text: `${ansNum/common}/${ansDen/common+1}`, value: `${ansNum/common}/${ansDen/common+1}` }
+        ];
+    } else if (problemType === 'angle') {
+        problemTextElement.style.display = 'none'; canvasContainer.style.display = 'block';
+        const angleTypes = ['Acute', 'Obtuse', 'Right'];
+        currentAnswer = angleTypes[Math.floor(Math.random() * angleTypes.length)];
+        drawAngle(currentAnswer);
+        choices = angleTypes.map(type => ({ text: type, value: type }));
+    }
+    
+    problemTextElement.textContent = problemText;
+    displayChoices(shuffle(choices));
+}
+
+// --- GAME LOGIC ---
+function checkAnswer(selectedAnswer) {
+    if (selectedAnswer == currentAnswer) {
+        score++;
+        updateScore();
+        if (score > 0 && score % 10 === 0) { level++; levelElement.textContent = `Level: ${level}`; }
+    }
+    generateProblem();
+}
+
+function updateScore() { scoreElement.textContent = `Score: ${score}`; }
+
+function startTimer() {
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        timerElement.textContent = `Time: ${timeLeft}`;
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            alert(`Game Over! Your score is ${score}`);
+            window.location.href = 'index.html';
+        }
+    }, 1000);
+}
+
+// Re-pasting drawAngle here because the previous thought block truncated it
 function drawAngle(angleType) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.strokeStyle = '#333';
@@ -78,114 +187,6 @@ function drawAngle(angleType) {
 
     ctx.beginPath(); ctx.moveTo(centerX, centerY); ctx.lineTo(centerX + lineLength, centerY); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(centerX, centerY); ctx.lineTo(centerX + lineLength * Math.cos(angle), centerY - lineLength * Math.sin(angle)); ctx.stroke();
-}
-
-function displayChoices(choices) {
-    answerChoicesElement.innerHTML = '';
-    choices.forEach(choice => {
-        const button = document.createElement('button');
-        button.textContent = choice.text;
-        button.className = 'choice-btn';
-        button.onclick = () => checkAnswer(choice.value);
-        answerChoicesElement.appendChild(button);
-    });
-}
-
-// --- PROBLEM GENERATION ---
-function generateProblem() {
-    const problemTypes = ['number', 'fraction', 'decimal', 'angle'];
-    currentProblemType = problemTypes[Math.floor(Math.random() * problemTypes.length)];
-    
-    problemTextElement.style.display = 'block';
-    canvasContainer.style.display = 'none';
-
-    let choices = [];
-    let problemText = '';
-
-    switch (currentProblemType) {
-        case 'number':
-            const ops = ['+', '-', '*', '/'];
-            const op = ops[Math.floor(Math.random() * ops.length)];
-            let num1, num2;
-            if (op === '+') { num1 = Math.floor(Math.random()*10*level); num2 = Math.floor(Math.random()*10*level); currentAnswer = num1 + num2; }
-            if (op === '-') { num1 = Math.floor(Math.random()*10*level); num2 = Math.floor(Math.random()*num1); currentAnswer = num1 - num2; }
-            if (op === '*') { num1 = Math.floor(Math.random()*10); num2 = Math.floor(Math.random()*10); currentAnswer = num1 * num2; }
-            if (op === '/') { num2 = Math.floor(Math.random()*9)+1; num1 = num2*(Math.floor(Math.random()*10)); currentAnswer = num1 / num2; }
-            problemText = `${num1} ${op.replace('*','×').replace('/','÷')} ${num2}`;
-            choices = [
-                { text: currentAnswer, value: currentAnswer },
-                { text: currentAnswer + (Math.floor(Math.random()*3)+1), value: currentAnswer + (Math.floor(Math.random()*3)+1) },
-                { text: Math.max(0, currentAnswer - (Math.floor(Math.random()*3)+1)), value: Math.max(0, currentAnswer - (Math.floor(Math.random()*3)+1)) }
-            ];
-            break;
-        case 'decimal':
-            num1 = parseFloat((Math.random() * 10).toFixed(1));
-            num2 = parseFloat((Math.random() * 10).toFixed(1));
-            currentAnswer = parseFloat((num1 + num2).toFixed(1));
-            problemText = `${num1} + ${num2}`;
-            choices = [
-                { text: currentAnswer, value: currentAnswer },
-                { text: parseFloat((currentAnswer + 1).toFixed(1)), value: parseFloat((currentAnswer + 1).toFixed(1)) },
-                { text: parseFloat(Math.max(0, currentAnswer - 1).toFixed(1)), value: parseFloat(Math.max(0, currentAnswer - 1).toFixed(1)) }
-            ];
-            break;
-        case 'fraction':
-            const den1 = Math.floor(Math.random() * 5) + 2;
-            let den2 = Math.floor(Math.random() * 5) + 2;
-            const num_1 = Math.floor(Math.random() * den1) + 1;
-            const num_2 = Math.floor(Math.random() * den2) + 1;
-            problemText = `${num_1}/${den1} + ${num_2}/${den2}`;
-            let ansNum = num_1 * den2 + num_2 * den1;
-            let ansDen = den1 * den2;
-            let common = gcd(ansNum, ansDen);
-            currentAnswer = `${ansNum/common}/${ansDen/common}`;
-            choices = [
-                { text: currentAnswer, value: currentAnswer },
-                { text: `${ansNum/common + 1}/${ansDen/common}`, value: `${ansNum/common + 1}/${ansDen/common}` },
-                { text: `${ansNum/common}/${ansDen/common + 1}`, value: `${ansNum/common}/${ansDen/common + 1}` }
-            ];
-            break;
-        case 'angle':
-            problemTextElement.style.display = 'none';
-            canvasContainer.style.display = 'block';
-            const angleTypes = ['Acute', 'Obtuse', 'Right'];
-            currentAnswer = angleTypes[Math.floor(Math.random() * angleTypes.length)];
-            drawAngle(currentAnswer);
-            choices = angleTypes.map(type => ({ text: type, value: type }));
-            break;
-    }
-    
-    problemTextElement.textContent = problemText;
-    displayChoices(shuffle(choices));
-}
-
-// --- GAME LOGIC ---
-function checkAnswer(selectedAnswer) {
-    if (selectedAnswer == currentAnswer) {
-        score++;
-        updateScore();
-        if (score > 0 && score % 10 === 0) {
-            level++;
-            levelElement.textContent = `Level: ${level}`;
-        }
-    }
-    generateProblem();
-}
-
-function updateScore() {
-    scoreElement.textContent = `Score: ${score}`;
-}
-
-function startTimer() {
-    timerInterval = setInterval(() => {
-        timeLeft--;
-        timerElement.textContent = `Time: ${timeLeft}`;
-        if (timeLeft <= 0) {
-            clearInterval(timerInterval);
-            alert(`Game Over! Your score is ${score}`);
-            window.location.href = 'index.html';
-        }
-    }, 1000);
 }
 
 initialize();

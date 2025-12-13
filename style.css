@@ -5,7 +5,7 @@ body {
     color: #333;
 }
 
-#welcome-container, #game-container {
+#welcome-container, #game-container, #mode-selection-container {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -25,6 +25,11 @@ body {
     color: white;
 }
 
+#mode-selection-container {
+    background-color: #9b59b6;
+    color: white;
+}
+
 h1 {
     font-size: 3em;
     margin-bottom: 30px;
@@ -34,6 +39,29 @@ h2 {
     font-size: 1.5em;
     margin-bottom: 15px;
 }
+
+#mode-choices {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    max-width: 600px;
+}
+
+.mode-btn {
+    padding: 20px 30px;
+    font-size: 1.2em;
+    cursor: pointer;
+    border: none;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    transition: background-color 0.2s;
+}
+
+.mode-btn:hover {
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
 
 #login-form, #signup-form {
     background-color: rgba(255, 255, 255, 0.1);
