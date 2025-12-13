@@ -26,7 +26,8 @@ signupButton.addEventListener('click', () => {
 
         localStorage.setItem('math_game_data', JSON.stringify(data));
         
-        alert('Account created successfully! Please sign in.');
+        const welcomeMessage = `Welcome, ${username}! Your account has been successfully created.\n\nIf you do not play in 7 days or more, this username will be deleted.\n\nThis account is being recorded with a real-time recorder...`;
+        alert(welcomeMessage);
         window.location.href = 'index.html';
     } catch (e) {
         alert('Error creating account: ' + e.message);
