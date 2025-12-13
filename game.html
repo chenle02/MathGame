@@ -27,6 +27,9 @@
         <div id="answer-choices"></div>
 
     </div>
-    <script src="game.js"></script>
+    <script>
+        // Dynamically write script tag to prevent caching
+        document.write('<script src="game.js?t=' + new Date().getTime() + '"><\/script>');
+    </script>
 </body>
 </html>

@@ -18,6 +18,9 @@
             <a href="index.html">Already have an account? Sign In</a>
         </div>
     </div>
-    <script src="createUser.js"></script>
+    <script>
+        // Dynamically write script tag to prevent caching
+        document.write('<script src="createUser.js?t=' + new Date().getTime() + '"><\/script>');
+    </script>
 </body>
 </html>

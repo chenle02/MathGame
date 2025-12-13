@@ -18,6 +18,9 @@
             <a href="createUsername.html">Don't have an account? Create one</a>
         </div>
     </div>
-    <script src="login.js"></script>
+    <script>
+        // Dynamically write script tag to prevent caching
+        document.write('<script src="login.js?t=' + new Date().getTime() + '"><\/script>');
+    </script>
 </body>
 </html>
