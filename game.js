@@ -162,6 +162,14 @@ function drawAngle(angleType) {
     ctx.beginPath(); ctx.moveTo(centerX, centerY); ctx.lineTo(centerX + lineLength * Math.cos(angle), centerY - lineLength * Math.sin(angle)); ctx.stroke();
 }
 
+function resetGame() {
+    score = 0; level = 1; timeLeft = 60;
+    updateScore();
+    levelElement.textContent = `Level: ${level}`;
+    timerElement.textContent = `Time: ${timeLeft}`;
+    if (timerInterval) clearInterval(timerInterval);
+}
+
 function initialize() {
     try {
         currentUser = localStorage.getItem('math_game_currentUser');
