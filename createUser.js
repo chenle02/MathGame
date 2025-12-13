@@ -9,14 +9,22 @@ signupButton.addEventListener('click', () => {
             return;
         }
 
-        let users = JSON.parse(localStorage.getItem('math_game_users')) || [];
-        if (users.includes(username)) {
+        // Get the main data object, or initialize it
+        let data = JSON.parse(localStorage.getItem('math_game_data')) || { users: {}, archivedUsers: {}, currentUser: null };
+
+        // Check if user exists in active users or archived users
+        if (data.users[username] || data.archivedUsers[username]) {
             alert('Username already exists. Please choose another one.');
             return;
         }
 
-        users.push(username);
-        localStorage.setItem('math_game_users', JSON.stringify(users));
+        // Create new user
+        data.users[username] = {
+            highScore: 0,
+            lastPlayed: Date.now()
+        };
+
+        localStorage.setItem('math_game_data', JSON.stringify(data));
         
         alert('Account created successfully! Please sign in.');
         window.location.href = 'index.html';
