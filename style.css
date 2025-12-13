@@ -35,18 +35,23 @@ h2 {
     margin-bottom: 15px;
 }
 
-#auth-forms {
-    display: flex;
-    justify-content: space-around;
-    gap: 40px;
-    margin-top: 20px;
-}
-
-#signup-form, #login-form {
+#login-form, #signup-form {
     background-color: rgba(255, 255, 255, 0.1);
     padding: 30px;
     border-radius: 8px;
 }
+
+.navigation-link {
+    margin-top: 30px;
+}
+
+.navigation-link a {
+    color: white;
+    text-decoration: underline;
+    font-size: 1.1em;
+}
+
+
 
 .game-info {
     display: flex;
