@@ -34,8 +34,12 @@
 
     </div>
     <script>
-        // Dynamically write script tag to prevent caching
-        document.write('<script src="game.js?t=' + new Date().getTime() + '"><\/script>');
+        // More robust cache-busting to ensure the latest script is always loaded.
+        (function() {
+            var script = document.createElement('script');
+            script.src = 'game.js?t=' + new Date().getTime();
+            document.head.appendChild(script);
+        })();
     </script>
 </body>
 </html>
