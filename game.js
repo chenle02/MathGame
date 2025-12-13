@@ -53,7 +53,34 @@ document.addEventListener('DOMContentLoaded', () => {
      * @param {string} op - The operator to use.
      * @returns {{problemText: string, choices: Array<object>}}
      */
-    function generateNumberProblem(op) { let num1, num2; if (op === '+') { num1 = Math.floor(Math.random()*10*level); num2 = Math.floor(Math.random()*10*level); currentAnswer = num1 + num2; } if (op === '-') { num1 = Math.floor(Math.random()*10*level); num2 = Math.floor(Math.random()*num1); currentAnswer = num1 - num2; } if (op === '*') { num1 = Math.floor(Math.random()*10); num2 = Math.floor(Math.random()*10); currentAnswer = num1 * num2; } if (op === '/') { num2 = Math.floor(Math.random()*9)+1; num1 = num2*(Math.floor(Math.random()*10)); currentAnswer = num1 / num2; } const problemText = `${num1} ${op.replace('*','×').replace('/','÷')} ${num2}`; const choices = [ { text: currentAnswer, value: currentAnswer }, { text: currentAnswer + (Math.floor(Math.random()*3)+1), value: currentAnswer + (Math.floor(Math.random()*3)+1) }, { text: Math.max(0, currentAnswer - (Math.floor(Math.random()*3)+1)), value: Math.max(0, currentAnswer - (Math.floor(Math.random()*3)+1)) } ]; return { problemText, choices }; }
+    function generateNumberProblem(op) {
+        let num1, num2;
+        if (op === '+') {
+            num1 = Math.floor(Math.random() * 10 * level);
+            num2 = Math.floor(Math.random() * 10 * level);
+            currentAnswer = num1 + num2;
+        } else if (op === '-') {
+            num1 = Math.floor(Math.random() * 10 * level);
+            num2 = Math.floor(Math.random() * num1);
+            currentAnswer = num1 - num2;
+        } else if (op === '*') {
+            num1 = Math.floor(Math.random() * 10);
+            num2 = Math.floor(Math.random() * 10);
+            currentAnswer = num1 * num2;
+        } else if (op === '/') {
+            num2 = Math.floor(Math.random() * 9) + 1;
+            num1 = num2 * (Math.floor(Math.random() * 10));
+            currentAnswer = num1 / num2;
+        }
+        
+        const problemText = `${num1} ${op.replace('*','×').replace('/','÷')} ${num2}`;
+        const choices = [
+            { text: currentAnswer, value: currentAnswer },
+            { text: currentAnswer + (Math.floor(Math.random()*3)+1), value: currentAnswer + (Math.floor(Math.random()*3)+1) },
+            { text: Math.max(0, currentAnswer - (Math.floor(Math.random()*3)+1)), value: Math.max(0, currentAnswer - (Math.floor(Math.random()*3)+1)) }
+        ];
+        return { problemText, choices };
+    }
     
     /**
      * Generates a decimal addition problem.
