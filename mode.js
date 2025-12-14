@@ -1,11 +1,13 @@
-document.addEventListener('DOMContentLoaded', () => {
+function initModePage() {
     const modeButtons = document.querySelectorAll('.mode-btn');
     const errorMessageElement = document.getElementById('error-message');
     const usernameElement = document.getElementById('current-username');
     const logoutButton = document.getElementById('mode-logout');
 
     function displayError(message) {
-        errorMessageElement.textContent = message;
+        if (errorMessageElement) {
+            errorMessageElement.textContent = message;
+        }
     }
 
     let storedData = { users: {}, archivedUsers: {}, currentUser: null };
@@ -18,7 +20,9 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        usernameElement.innerHTML = `SIGNED IN AS <span class="username">${currentUser}</span>`;
+        if (usernameElement) {
+            usernameElement.innerHTML = `SIGNED IN AS <span class="username">${currentUser}</span>`;
+        }
 
         modeButtons.forEach(button => {
             button.addEventListener('click', () => {
@@ -53,4 +57,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (logoutButton) {
         logoutButton.addEventListener('click', handleLogout);
     }
-});
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initModePage);
+} else {
+    initModePage();
+}
