@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        usernameElement.textContent = currentUser;
+        usernameElement.innerHTML = `SIGNED IN AS <span class="username">${currentUser}</span>`;
 
         modeButtons.forEach(button => {
             button.addEventListener('click', () => {

@@ -37,23 +37,20 @@ body {
     right: 20px;
     display: flex;
     align-items: center;
-    gap: 18px;
-}
-
-#user-info {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 6px;
+    gap: 16px;
     font-size: 0.85em;
-    letter-spacing: 0.08em;
     text-transform: uppercase;
+    letter-spacing: 0.08em;
 }
 
 #current-username {
-    font-size: 1em;
     font-weight: 600;
+}
+
+#current-username .username {
     text-transform: none;
+    letter-spacing: normal;
+    font-weight: 700;
 }
 
 #mode-logout {
